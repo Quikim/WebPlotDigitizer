@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Created-By: Apache Maven 3.5.0
+Built-By: yitingwang
+Build-Jdk: 1.8.0_171-google-v7
+Main-Class: com.google.javascript.jscomp.CommandLineRunner
+
