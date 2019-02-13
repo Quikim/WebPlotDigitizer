@@ -300,7 +300,7 @@ wpd.MapAxesCalibrator = class extends wpd.AxesCalibrator {
 wpd.alignAxes = (function() {
     let calibration = null;
     let calibrator = null;
-
+    
     function initiatePlotAlignment() {
         let xyEl = document.getElementById('r_xy');
         let polarEl = document.getElementById('r_polar');
