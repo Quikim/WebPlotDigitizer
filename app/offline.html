@@ -37,8 +37,10 @@
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     
 <script src="combined-compiled.js"></script>
-
-
+<script src="javascript\controllers\Autocal.js"></script>
+<script src="javascript\controllers\axesAutoCalibration.js"></script>
+<script src="thirdparty/Tessjs/tessmini.js"></script>
+<script src="thirdparty/Tessjs/jquery-3.3.1.slim.min.js"></script>
     <!-- WebAssembly -->
     <script src="wasm.js"></script>
 
@@ -140,7 +142,7 @@
         <center>
             <p><input type="button" value="Add Calibration" style="width:150px;" onclick="wpd.alignAxes.addCalibration();" /></p>
             <p><input type="button" value="Remove Grid" style="width:150px;" onclick="wpd.gridDetection.start();" /></p>
-            <!-- <p><input type="button" value="Import Calibration" style="width:150px;"/></p> -->
+            <p><input type="button" value="Auto Calibration" style="width:150px;" onclick="wpd.autoAlign().start();"/></p>
             <!-- <p><input type="button" value="Export Calibration" style="width:150px;"/></p> -->
         </center>
     </div>
