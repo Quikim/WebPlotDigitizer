@@ -23,7 +23,7 @@ var wpd = wpd || {};
 wpd.autoAlign = (function() {
     
     function initiatePlotAlignment() {
-        
+    console.log()
     let promise1 = new Promise(function(resolve) {
     number_detection(resolve);
     });
@@ -59,12 +59,11 @@ wpd.autoAlign = (function() {
     }
         
 
-    console.log(calibrator)
+    console.log(calibration)
     });
 
     function number_detection(resolve){
-            let img =new Image();
-            img.src="javascript/controllers/Figure2.png"
+            let img =wpd.graphicsWidget.getImagePNG();
             //let $canvas=document.getElementById('canvas');
             //console.log($canvas)
             //img.src=$canvas.toDataURL();
@@ -73,9 +72,7 @@ wpd.autoAlign = (function() {
                 x: new Array(), 
                 y: new Array(), 
                 val: new Array(),
-            };
-            
-            img.onload =function(){
+            };         
                 Tesseract.recognize(img, {
                     tessedit_char_whitelist: "-+0123456789.",
                 //}).progress((progress)=>{
@@ -94,7 +91,7 @@ wpd.autoAlign = (function() {
                 })
                 resolve(det_point);
             })
-        }}
+        }
 
         function occur(arr) {
         /* Getting the value of the most frequent occurence*/
