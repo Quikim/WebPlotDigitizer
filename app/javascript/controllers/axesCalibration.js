@@ -300,131 +300,7 @@ wpd.MapAxesCalibrator = class extends wpd.AxesCalibrator {
 wpd.alignAxes = (function() {
     let calibration = null;
     let calibrator = null;
-    function iniauto(){
-            calibration = new wpd.Calibration(2);
-            calibration.labels = ['X1', 'X2', 'Y1', 'Y2'];
-            calibration.labelPositions = ['N', 'N', 'E', 'E'];
-            calibration.maxPointCount = 4;
-            calibrator = new wpd.XYAxesCalibrator(calibration, false);
-            console.log()
-            let promise1 = new Promise(function(resolve) {
-            number_detection(resolve);
-            });
-            promise1.then(function(value) {
-                
-            var values =XYvalues(value)    
-            if (calibrator != null) {
-                calibration.addPoint(values[0].x,values[0].y,0,0)
-                calibration.addPoint(values[1].x,values[1].y,0,0)
-                calibration.addPoint(values[2].x,values[2].y,0,0)
-                calibration.addPoint(values[3].x,values[3].y,0,0)
-                calibrator.reload();
-               
-                wpd.graphicsWidget.setRepainter(new wpd.AlignmentCornersRepainter(calibration));
-                wpd.graphicsWidget.forceHandlerRepaint();
-                wpd.sidebar.show('axes-calibration-sidebar');    
-                //wpd.sidebar.show('axes-calibration-sidebar');
-                document.getElementById('xmin').value = values[0].val;
-                document.getElementById('xmax').value = values[1].val;
-                document.getElementById('ymin').value = values[2].val;
-                document.getElementById('ymax').value = values[3].val;
-            }
-            });
-        
-            function number_detection(resolve){
-                    let img =wpd.graphicsWidget.getImagePNG();
-                    //let $canvas=document.getElementById('canvas');
-                    //console.log($canvas)
-                    //img.src=$canvas.toDataURL();
-        
-                    var det_point = {
-                        x: new Array(), 
-                        y: new Array(), 
-                        val: new Array(),
-                    };         
-                        Tesseract.recognize(img, {
-                            tessedit_char_whitelist: "-+0123456789.",
-                        //}).progress((progress)=>{
-                            //if(progress.status ==="recognizing text"){
-                              //  $('#progress').text(progress.progress*100+"%");
-                            //}
-                        }).then((result)=>{
-                            //console.log(result)
-                        result.words.forEach(function(w){
-                            var b = w.bbox;
-                            if(w.confidence>70){
-                                det_point.x.push((b.x0+b.x1)/2)
-                                det_point.y.push((b.y0+b.y1)/2)
-                                det_point.val.push(w.text)
-                            } 
-                        })
-                        resolve(det_point);
-                    })
-                }
-        
-                function occur(arr) {
-                /* Getting the value of the most frequent occurence*/
-                    var occ=0;
-                    var tocc=0;
-                    var j=0;
-                    var max=0;
-                    while ( j < arr.length ) {   
-                     for ( var i = 0; i < arr.length; i++ ) {
-                        if(arr[j]==arr[i]){
-                            tocc++;
-                         }
-                        }
-                    if(tocc>occ){
-                        max=arr[j];
-                        occ=tocc;
-                    }
-                    tocc=0;
-                    j++;  
-                    }
-                    return [max];
-                }
-            function XYvalues (det_point){
-                var nx = {
-                    x: new Array(), 
-                    y: new Array(), 
-                    val: new Array(),
-                };
-                var ny = {
-                    x: new Array(), 
-                    y: new Array(), 
-                    val: new Array(),
-                };
-                cx=occur(det_point.y) 
-               
-               //cx is the maximum occurence of a defined position y. 
-               //This will likely correspond to the position of each label of x that are aligned on y axis
-                cy=occur(det_point.x)
-                //same for cy with x position
-                for (i =0; i<det_point.y.length;i++){
-                //getting the position and values of each label
-                    if(det_point.y[i]==cx){
-                        nx.x.push(det_point.x[i])
-                        nx.y.push(det_point.y[i])
-                        nx.val.push(det_point.val[i])
-                    }
-                    if(det_point.x[i]==cy){
-                        ny.x.push(det_point.x[i])
-                        ny.y.push(det_point.y[i])
-                        ny.val.push(det_point.val[i])
-                    }
-                }
-                //taking the first and last elements of the x and y labels
-                var xmin= {x: nx.x[0],y: nx.y[0],val: nx.val[0]}
-                var xmax= {x: nx.x[nx.x.length-1],y: nx.y[nx.y.length-1],val: nx.val[nx.val.length-1]}
-                var ymax= {x: ny.x[0],y: ny.y[0],val: ny.val[0]}
-                var ymin= {x: ny.x[ny.x.length-1],y: ny.y[ny.y.length-1],val: ny.val[ny.val.length-1]}
-                
-                var points=[xmin,xmax,ymin,ymax]
-            return points
-            }
-        
-        
-    }
+    
     function initiatePlotAlignment() {
         let xyEl = document.getElementById('r_xy');
         let polarEl = document.getElementById('r_polar');
@@ -624,7 +500,36 @@ wpd.alignAxes = (function() {
         return fullName;
     }
 
-    return {
+    function iniauto(){
+        calibration = new wpd.Calibration(2);
+        calibration.labels = ['X1', 'X2', 'Y1', 'Y2'];
+        calibration.labelPositions = ['N', 'N', 'E', 'E'];
+        calibration.maxPointCount = 4;
+        calibrator = new wpd.XYAxesCalibrator(calibration, false);
+        let promise1 = new Promise(function(resolve) {
+            wpd.autoAlign.number_detection(resolve);
+        });
+        promise1.then(function(value) {
+        let values =wpd.autoAlign.cornerValues(value)
+        console.log(values.length)    
+        if (calibrator != null&&values.length==4) {
+            calibration.addPoint(values[0].x,values[0].y,0,0)
+            calibration.addPoint(values[1].x,values[1].y,0,0)
+            calibration.addPoint(values[2].x,values[2].y,0,0)
+            calibration.addPoint(values[3].x,values[3].y,0,0)
+            calibrator.reload();
+           
+            wpd.graphicsWidget.setRepainter(new wpd.AlignmentCornersRepainter(calibration));
+            wpd.graphicsWidget.forceHandlerRepaint();
+            wpd.sidebar.show('axes-calibration-sidebar');    
+            //wpd.sidebar.show('axes-calibration-sidebar');
+            document.getElementById('xmin').value = values[0].val;
+            document.getElementById('xmax').value = values[1].val;
+            document.getElementById('ymin').value = values[2].val;
+            document.getElementById('ymax').value = values[3].val;
+        }
+        });}
+return {
         iniauto: iniauto,
         start: initiatePlotAlignment,
         calibrationCompleted: calibrationCompleted,
