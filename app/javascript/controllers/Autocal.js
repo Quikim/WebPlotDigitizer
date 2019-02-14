@@ -21,31 +21,38 @@
 
 var wpd = wpd || {};
 wpd.autoAlign = (function() {
-    
-    function initiatePlotAlignment() {
+    let calibration = null;
+    let calibrator = null;
+
+    function start() {
+    calibration = new wpd.Calibration(2);
+    calibration.labels = ['X1', 'X2', 'Y1', 'Y2'];
+    calibration.labelPositions = ['N', 'N', 'E', 'E'];
+    calibration.maxPointCount = 4;
+    calibrator = new wpd.XYAxesCalibrator(calibration, false);
     console.log()
     let promise1 = new Promise(function(resolve) {
     number_detection(resolve);
     });
     promise1.then(function(value) {
         
-    var values =XYvalues(value)
-
-    let calibration = null;
-    let calibrator = null;
-    
-    calibration = new wpd.Calibration(2);
-    calibration.labels = ['X1', 'X2', 'Y1', 'Y2'];
-    calibration.labelPositions = ['N', 'N', 'E', 'E'];
-    calibration.maxPointCount = 4;
-    calibrator = new wpd.XYAxesCalibrator(calibration, false);
-    
+    var values =XYvalues(value)    
     if (calibrator != null) {
         calibration.addPoint(values[0].x,values[0].y,0,0)
         calibration.addPoint(values[1].x,values[1].y,0,0)
         calibration.addPoint(values[2].x,values[2].y,0,0)
         calibration.addPoint(values[3].x,values[3].y,0,0)
         calibrator.reload();
+        let axes = this._isEditing ? wpd.tree.getActiveAxes() : new wpd.XYAxes();
+        calibration.setDataAt(0, xmin, ymin);
+        calibration.setDataAt(1, xmax, ymin);
+        calibration.setDataAt(2, xmin, ymin);
+        calibration.setDataAt(3, xmax, ymax);
+        axes.name = wpd.alignAxes.makeAxesName(wpd.XYAxes);
+        
+        let plot = wpd.appData.getPlotData();
+        
+        plot.addAxes(axes);
         wpd.graphicsWidget.setRepainter(new wpd.AlignmentCornersRepainter(calibration));
         wpd.graphicsWidget.forceHandlerRepaint();
         wpd.sidebar.show('axes-calibration-sidebar');    
@@ -54,10 +61,7 @@ wpd.autoAlign = (function() {
         document.getElementById('xmax').value = values[1].val;
         document.getElementById('ymin').value = values[2].val;
         document.getElementById('ymax').value = values[3].val;
-        
-        
     }
-        
 
     console.log(calibration)
     });
@@ -155,6 +159,6 @@ wpd.autoAlign = (function() {
     }
 }
 return {
-    start: initiatePlotAlignment
+    start: start
 };
-})
+})();

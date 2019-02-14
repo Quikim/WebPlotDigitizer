@@ -39,6 +39,7 @@
 <script src="combined-compiled.js"></script>
 <script src="javascript\controllers\Autocal.js"></script>
 <script src="javascript\controllers\axesAutoCalibration.js"></script>
+<script src=javascript\controllers\axesCalibration.js></script>
 <script src="thirdparty/Tessjs/tessmini.js"></script>
 <script src="thirdparty/Tessjs/jquery-3.3.1.slim.min.js"></script>
     <!-- WebAssembly -->
@@ -142,7 +143,7 @@
         <center>
             <p><input type="button" value="Add Calibration" style="width:150px;" onclick="wpd.alignAxes.addCalibration();" /></p>
             <p><input type="button" value="Remove Grid" style="width:150px;" onclick="wpd.gridDetection.start();" /></p>
-            <p><input type="button" value="Auto Calibration" style="width:150px;" onclick="wpd.autoAlign.start();"/></p>
+            <p><input type="button" value="Auto Calibration" style="width:150px;" onclick="wpd.alignAxes.iniauto();"/></p>
             <!-- <p><input type="button" value="Export Calibration" style="width:150px;"/></p> -->
         </center>
     </div>
@@ -616,7 +617,7 @@
                 <td align="center"><input type="checkbox" id="polar-log-scale" /></td>
             </tr>
             <tr>
-                <td>Θ: </td>
+                <td>T: </td>
                 <td align="center"><input type="text" size="6" id="polar-theta1" value="1" onfocus="wpd.alignAxes.zoomCalPoint(1);" /></td>
                 <td align="center"><input type="text" size="6" id="polar-theta2" value="1" onfocus="wpd.alignAxes.zoomCalPoint(2);" /></td>
                 <td align="center">&nbsp;</td>
